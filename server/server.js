@@ -33,7 +33,21 @@ boot(app, __dirname, function(err) {
     app.start();
 });
 
-app.models.User.afterRemote('create', (ctx, user, next) => {
+app.models.user.find((err, result) => {
+  if (result.length === 0) {
+    const user = {
+      email: 'krishnachittodia.10@gmail.com',
+      password: 'k7503673841',
+      username: 'kannu21',
+    };
+
+    app.models.user.create(user, (err, result) => {
+      console.log('Tried to create user', err, result);
+    });
+  }
+});
+
+app.models.user.afterRemote('create', (ctx, user, next) => {
   app.models.Profile.create({
     first_name: user.userName,
     created_at: new Date(),
