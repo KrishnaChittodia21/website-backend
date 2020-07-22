@@ -44,7 +44,7 @@ var models = require('./server.js').models;
 
 var filter = {
   where: {
-    email: {like: 'kannu'},
+    email: {like: 'xyz'},
   },
   order: 'id ASC',
   limit: 10,
@@ -66,6 +66,6 @@ var filter = {
   // },
 };
 
-models.Profile.find(filter, (err, result) => {
+models.Profile.findById('5f18b7d12c357a4b5b37cb7d', filter, (err, result) => {
   console.log('found?', result);
 });
