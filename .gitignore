@@ -18,4 +18,4 @@ coverage
 node_modules
 package-lock.json
 npm-debug.log
-/server/storage/postImages
+server/storage/postImages
