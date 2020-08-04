@@ -1,17 +1,27 @@
+/* eslint-disable max-len */
 /* eslint-disable camelcase */
 'use strict';
 const sharp = require('sharp');
 const fs = require('fs');
 
-const CONTAINER_URL = '/api/containers/';
+const CONTAINER_URL = '/api/ImageFiles/';
 module.exports = function(PostImage) {
-  PostImage.upload = function(ctx, options, access_token, post_id, cb) {
+  PostImage.upload = function(ctx, options, access_token, post_id, user_id, cb) {
     if (!options) options = {};
     ctx.req.params.container = 'postImages';
     if (!fs.existsSync('./server/storage/' + ctx.req.params.container)) {
-      fs.mkdirSync('./server/storage/' + ctx.req.container);
+      fs.mkdirSync('./server/storage/' + ctx.req.params.container);
     }
-    PostImage.app.models.ImageFile.upload(ctx.req, ctx.res, options,
+
+    PostImage.find({where: {postId: post_id}}, (fErr, files) => {
+      if (!fErr && files) {
+        files.map(fil => {
+          fil.updateAttributes({postId: null});
+        });
+      }
+    });
+
+    PostImage.app.models.ImageFile.upload(ctx.req, ctx.result, options,
       (err, file) => {
         if (err) {
           cb(err);
@@ -29,6 +39,7 @@ module.exports = function(PostImage) {
                   '/download/100-' + fileInfo.name,
                   created_at: new Date(),
                   postId: post_id,
+                  userId: user_id,
                 }, (err2, image) => {
                   if (err2) {
                     cb(err2);
